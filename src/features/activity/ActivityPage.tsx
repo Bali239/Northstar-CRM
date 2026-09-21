@@ -37,7 +37,7 @@ export function ActivityPage() {
         </div>
       </div>
       <Card className="table-card" variant="borderless">
-        {contacts.length ? <Table rowKey="id" columns={columns} dataSource={contacts} loading={isLoading} pagination={{ pageSize: 10, showSizeChanger: true }} /> : <Empty description="No activity yet" />}
+        {contacts.length ? <Table rowKey="id" columns={columns} dataSource={contacts} loading={isLoading} pagination={{ defaultPageSize: 10, showSizeChanger: true }} /> : <Empty description="No activity yet" />}
       </Card>
     </div>
   );
