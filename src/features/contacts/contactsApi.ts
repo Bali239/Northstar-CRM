@@ -234,10 +234,16 @@ function writeDemoContacts(next: Contact[]) {
 }
 
 let demoContacts: Contact[] = readDemoContacts();
+const contactListTag = { type: "Contact" as const, id: "LIST" };
+
 export const contactsApi = createApi({
   reducerPath: "contactsApi",
   baseQuery: fakeBaseQuery(),
   tagTypes: ["Contact"],
+  keepUnusedDataFor: 300,
+  refetchOnMountOrArgChange: false,
+  refetchOnFocus: false,
+  refetchOnReconnect: false,
   endpoints: (builder) => ({
     getContacts: builder.query<Contact[], ContactFilters & { demo?: boolean }>({
       queryFn: async (filters) => {
@@ -263,7 +269,16 @@ export const contactsApi = createApi({
           ? { error: { status: "CUSTOM_ERROR", error: error.message } }
           : { data: (data ?? []) as Contact[] };
       },
-      providesTags: ["Contact"],
+      providesTags: (result) =>
+        result
+          ? [
+              contactListTag,
+              ...result.map((contact) => ({
+                type: "Contact" as const,
+                id: contact.id,
+              })),
+            ]
+          : [contactListTag],
     }),
     createContact: builder.mutation<
       Contact,
@@ -312,7 +327,7 @@ export const contactsApi = createApi({
             }
           : { data: data as Contact };
       },
-      invalidatesTags: ["Contact"],
+      invalidatesTags: [contactListTag],
     }),
     updateContact: builder.mutation<
       Contact,
@@ -348,7 +363,13 @@ export const contactsApi = createApi({
           ? { error: { status: "CUSTOM_ERROR", error: error.message } }
           : { data: data as Contact };
       },
-      invalidatesTags: ["Contact"],
+      invalidatesTags: (_result, error, argument) =>
+        error
+          ? []
+          : [
+              contactListTag,
+              { type: "Contact" as const, id: argument.id },
+            ],
     }),
     deleteContact: builder.mutation<void, { id: string; demo?: boolean }>({
       queryFn: async ({ id, demo }) => {
@@ -364,7 +385,13 @@ export const contactsApi = createApi({
           ? { error: { status: "CUSTOM_ERROR", error: error.message } }
           : { data: undefined };
       },
-      invalidatesTags: ["Contact"],
+      invalidatesTags: (_result, error, argument) =>
+        error
+          ? []
+          : [
+              contactListTag,
+              { type: "Contact" as const, id: argument.id },
+            ],
     }),
   }),
 });
