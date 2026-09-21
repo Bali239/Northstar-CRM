@@ -22,13 +22,35 @@ export function OverviewPage() {
 
   const active = contacts.filter((contact) => contact.status === "active").length;
   const leads = contacts.filter((contact) => contact.status === "lead").length;
+  const inactive = contacts.filter((contact) => contact.status === "inactive").length;
+  const sourceCounts = contacts.reduce<Record<string, number>>((counts, contact) => {
+    counts[contact.source] = (counts[contact.source] ?? 0) + 1;
+    return counts;
+  }, {});
+  const recentContacts = contacts.slice(0, 4);
+  const recentCount = contacts.filter(
+    (contact) => Date.now() - new Date(contact.created_at).getTime() <= 30 * 24 * 60 * 60 * 1000,
+  ).length;
+  const maxSourceCount = Math.max(...Object.values(sourceCounts), 1);
+  const sourceEntries = Object.entries(sourceCounts).sort(([, a], [, b]) => b - a);
+  const todayLabel = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).toUpperCase();
+  const formatDate = (date: string) =>
+    new Date(date).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
 
   return (
     <div className="page-content">
       <div className="page-heading">
         <div>
           <Typography.Text className="eyebrow">
-            MONDAY, SEPTEMBER 21, 2026
+            {todayLabel}
           </Typography.Text>
           <Typography.Title>Good morning, operator.</Typography.Title>
           <Typography.Paragraph type="secondary">
@@ -51,7 +73,7 @@ export function OverviewPage() {
               loading={isLoading}
             />
             <span className="metric-trend">
-              <ArrowUpOutlined /> 12% <em>this month</em>
+              <ArrowUpOutlined /> {recentCount} <em>added in the last 30 days</em>
             </span>
           </Card>
         </Col>
@@ -65,7 +87,7 @@ export function OverviewPage() {
               loading={isLoading}
             />
             <span className="metric-trend">
-              <ArrowUpOutlined /> 8.4% <em>this month</em>
+              {contacts.length ? Math.round((active / contacts.length) * 100) : 0}% <em>of all contacts</em>
             </span>
           </Card>
         </Col>
@@ -85,11 +107,12 @@ export function OverviewPage() {
         <Col xs={24} sm={12} xl={6}>
           <Card className="metric-card">
             <Statistic
-              title="Avg. response time"
-              value="4.2h"
+              title="Inactive contacts"
+              value={inactive}
               prefix={<FieldTimeOutlined />}
+              loading={isLoading}
             />
-            <span className="metric-trend muted">- 18m from last week</span>
+            <span className="metric-trend muted">Needs re-engagement</span>
           </Card>
         </Col>
       </Row>
@@ -98,144 +121,89 @@ export function OverviewPage() {
         <Card
           className="signal-card"
           title="Relationship signal"
-          extra={<Typography.Text type="secondary">Last 30 days</Typography.Text>}
+          extra={<Typography.Text type="secondary">Contacts by source</Typography.Text>}
         >
           <div className="signal-chart">
             <div className="chart-y">
-              <span>120</span>
-              <span>80</span>
-              <span>40</span>
+              <span>{maxSourceCount}</span>
+              <span>{Math.round(maxSourceCount * 0.66)}</span>
+              <span>{Math.round(maxSourceCount * 0.33)}</span>
               <span>0</span>
             </div>
 
             <div className="chart-area">
-              <div className="chart-line" />
               <div className="chart-bars">
-                <i style={{ height: "32%" }} />
-                <i style={{ height: "46%" }} />
-                <i style={{ height: "38%" }} />
-                <i style={{ height: "64%" }} />
-                <i style={{ height: "53%" }} />
-                <i style={{ height: "78%" }} />
-                <i style={{ height: "67%" }} />
-                <i style={{ height: "92%" }} />
-                <i style={{ height: "73%" }} />
-                <i style={{ height: "84%" }} />
+                {sourceEntries.map(([source, count]) => (
+                  <i
+                    key={source}
+                    title={`${source}: ${count}`}
+                    style={{ height: `${Math.max((count / maxSourceCount) * 100, 4)}%` }}
+                  />
+                ))}
               </div>
             </div>
 
             <div className="chart-x">
-              <span>Aug 24</span>
-              <span>Sep 07</span>
-              <span>Sep 21</span>
+              {sourceEntries.map(([source]) => <span key={source}>{source}</span>)}
             </div>
           </div>
 
           <div className="chart-legend">
             <span>
-              <i className="dot coral" /> Engaged contacts
-            </span>
-            <span>
-              <i className="dot navy" /> New conversations
+              <i className="dot coral" /> Contacts by source
             </span>
           </div>
         </Card>
 
         <Card className="focus-card" title="Today's focus">
-          <div className="focus-item">
-            <span className="focus-number">01</span>
-            <div>
-              <strong>Follow up with new leads</strong>
-              <p>3 contacts waiting for a first touch</p>
+          {[
+            ["Lead follow-up", `${leads} contacts are currently leads`],
+            ["Active relationships", `${active} contacts are marked active`],
+            ["Re-engagement", `${inactive} contacts are currently inactive`],
+          ].map(([title, detail], index) => (
+            <div className="focus-item" key={title}>
+              <span className="focus-number">{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <strong>{title}</strong>
+                <p>{detail}</p>
+              </div>
+              <ArrowUpOutlined />
             </div>
-            <ArrowUpOutlined />
-          </div>
-
-          <div className="focus-item">
-            <span className="focus-number">02</span>
-            <div>
-              <strong>Review quiet relationships</strong>
-              <p>8 contacts have gone quiet this month</p>
-            </div>
-            <ArrowUpOutlined />
-          </div>
-
-          <div className="focus-item">
-            <span className="focus-number">03</span>
-            <div>
-              <strong>Prepare weekly snapshot</strong>
-              <p>Team update is due tomorrow</p>
-            </div>
-            <ArrowUpOutlined />
-          </div>
+          ))}
         </Card>
       </div>
 
       <div className="dashboard-lower-grid">
         <Card className="activity-card" title="Recent activity">
           <div className="activity-list">
-            <div className="activity-item">
-              <span className="activity-dot success" />
-              <div>
-                <strong>Amelia Chen replied to a new opportunity</strong>
-                <p>2 hours ago</p>
+            {recentContacts.map((contact) => (
+              <div className="activity-item" key={contact.id}>
+                <span className={`activity-dot ${contact.status === "active" ? "success" : contact.status === "lead" ? "info" : "warning"}`} />
+                <div>
+                  <strong>{contact.full_name} added from {contact.source}</strong>
+                  <p>{contact.company} · {formatDate(contact.created_at)}</p>
+                </div>
               </div>
-            </div>
-            <div className="activity-item">
-              <span className="activity-dot info" />
-              <div>
-                <strong>Northwind quote was sent to 6 contacts</strong>
-                <p>Today, 9:42 AM</p>
-              </div>
-            </div>
-            <div className="activity-item">
-              <span className="activity-dot warning" />
-              <div>
-                <strong>3 warm leads are ready for follow-up</strong>
-                <p>Yesterday</p>
-              </div>
-            </div>
+            ))}
           </div>
         </Card>
 
         <Card className="pipeline-card" title="Pipeline momentum">
           <div className="pipeline-list">
-            <div className="pipeline-row">
-              <div>
-                <span>Discovery</span>
-                <small>18 deals</small>
-              </div>
-              <div className="pipeline-bar">
-                <i style={{ width: "76%" }} />
-              </div>
-            </div>
-            <div className="pipeline-row">
-              <div>
-                <span>Proposal</span>
-                <small>11 deals</small>
-              </div>
-              <div className="pipeline-bar">
-                <i style={{ width: "62%" }} />
-              </div>
-            </div>
-            <div className="pipeline-row">
-              <div>
-                <span>Negotiation</span>
-                <small>7 deals</small>
-              </div>
-              <div className="pipeline-bar">
-                <i style={{ width: "44%" }} />
-              </div>
-            </div>
-            <div className="pipeline-row">
-              <div>
-                <span>Closed</span>
-                <small>4 deals</small>
-              </div>
-              <div className="pipeline-bar">
-                <i style={{ width: "28%" }} />
-              </div>
-            </div>
+            {["lead", "active", "inactive"].map((status) => {
+              const count = contacts.filter((contact) => contact.status === status).length;
+              return (
+                <div className="pipeline-row" key={status}>
+                  <div>
+                    <span>{status[0].toUpperCase() + status.slice(1)}</span>
+                    <small>{count} contacts</small>
+                  </div>
+                  <div className="pipeline-bar">
+                    <i style={{ width: `${contacts.length ? (count / contacts.length) * 100 : 0}%` }} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </Card>
       </div>
