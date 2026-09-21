@@ -12,8 +12,14 @@
   min-height: 100vh;
   background: linear-gradient(180deg, #edf3f1 0%, #f5f7f5 100%);
 }
+.ant-layout {
+  min-height: 100vh;
+}
 .app-sider {
-  position: relative;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
   background: linear-gradient(180deg, #102a35 0%, #112b3a 100%) !important;
   color: #fff;
   padding: 28px 14px 18px;
