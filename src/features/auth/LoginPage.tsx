@@ -56,9 +56,9 @@ export function LoginPage() {
           <br />
           <span>Move with intent.</span>
         </Typography.Title>
-        <Typography.Paragraph>
-          One calm workspace for the relationships that move your business
-          forward.
+        <Typography.Paragraph className="auth-purpose-copy">
+          Northstar turns scattered customer details into clear next steps,
+          so your team can build better relationships and move with intent.
         </Typography.Paragraph>
 
         <div className="auth-trust">

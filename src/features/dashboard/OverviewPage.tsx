@@ -63,6 +63,27 @@ export function OverviewPage() {
         </Tag>
       </div>
 
+      <section className="purpose-banner">
+        <div className="purpose-mark">
+          <RiseOutlined />
+        </div>
+        <div>
+          <Typography.Text className="eyebrow">WHY NORTHSTAR EXISTS</Typography.Text>
+          <Typography.Title level={3}>
+            Turn scattered customer details into clear next steps.
+          </Typography.Title>
+          <Typography.Paragraph>
+            Northstar gives your team one calm place to understand every relationship,
+            spot what needs attention, and move conversations forward with intent.
+          </Typography.Paragraph>
+        </div>
+        <div className="purpose-principles">
+          <span>Centralize context</span>
+          <span>Prioritize follow-ups</span>
+          <span>Grow relationships</span>
+        </div>
+      </section>
+
       <Row gutter={[16, 16]} className="metric-row">
         <Col xs={24} sm={12} xl={6}>
           <Card className="metric-card">
