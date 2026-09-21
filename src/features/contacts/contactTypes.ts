@@ -22,4 +22,6 @@ export type ContactFilters = {
   status: ContactStatus | "all";
   source: ContactSource | "all";
   sort: "newest" | "oldest";
+  createdFrom: string;
+  createdTo: string;
 };

@@ -3,6 +3,7 @@ import {
   App as AntdApp,
   Button,
   Card,
+  DatePicker,
   Empty,
   Form,
   Input,
@@ -30,6 +31,7 @@ import {
   useUpdateContactMutation,
 } from "./contactsApi";
 import type { Contact, ContactInput } from "./contactTypes";
+import dayjs from "dayjs";
 
 const statusColors = {
   lead: "gold",
@@ -214,6 +216,29 @@ export default function ContactsPage() {
               { value: "active", label: "Active" },
               { value: "inactive", label: "Inactive" },
             ]}
+          />
+          <DatePicker.RangePicker
+            value={[
+              filters.createdFrom ? dayjs(filters.createdFrom) : null,
+              filters.createdTo ? dayjs(filters.createdTo) : null,
+            ]}
+            onChange={(dates) =>
+              {
+                dispatch(
+                  setFilter({
+                    key: "createdFrom",
+                    value: dates?.[0]?.format("YYYY-MM-DD") ?? "",
+                  }),
+                );
+                dispatch(
+                  setFilter({
+                    key: "createdTo",
+                    value: dates?.[1]?.format("YYYY-MM-DD") ?? "",
+                  }),
+                );
+              }
+            }
+            placeholder={["Added from", "Added to"]}
           />
           <Select
             value={filters.source}

@@ -329,6 +329,55 @@
   gap: 16px;
   margin-top: 16px;
 }
+.analytics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(300px, 0.7fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.analytics-bars,
+.analytics-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.analytics-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.analytics-bar-label,
+.analytics-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.analytics-bar-label {
+  justify-content: space-between;
+  color: var(--ink);
+  font-size: 13px;
+}
+.analytics-bar-label strong,
+.analytics-status-row strong {
+  font-family: "DM Mono", monospace;
+}
+.analytics-bar-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #edf3f0;
+}
+.analytics-bar-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #173d55, #e65b42);
+}
+.analytics-status-row span {
+  margin-left: auto;
+  color: var(--muted);
+  font: 11px "DM Mono", monospace;
+}
 .signal-card .ant-card-head,
 .focus-card .ant-card-head,
 .activity-card .ant-card-head,
@@ -560,6 +609,11 @@
 }
 .filter-bar .ant-select {
   min-width: 135px;
+  border-radius: 10px;
+}
+.filter-bar .ant-picker {
+  min-width: 250px;
+  height: 42px;
   border-radius: 10px;
 }
 .filter-bar .ant-btn {
@@ -893,6 +947,9 @@
   .overview-grid {
     grid-template-columns: 1fr;
   }
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
   .auth-page {
     grid-template-columns: 1fr;
   }
@@ -933,6 +990,9 @@
     flex-wrap: wrap;
   }
   .filter-bar .ant-input-affix-wrapper {
+    width: 100%;
+  }
+  .filter-bar .ant-picker {
     width: 100%;
   }
   .filter-bar .ant-select {

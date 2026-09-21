@@ -13,9 +13,10 @@ import {
   CompassOutlined,
   ContactsOutlined,
   DashboardOutlined,
+  LineChartOutlined,
   LogoutOutlined,
   MenuOutlined,
-  SettingOutlined,
+  OrderedListOutlined,
 } from "@ant-design/icons";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../config/supabase";
@@ -25,6 +26,8 @@ import { clearSession } from "../auth/authSlice";
 const navItems = [
   { key: "/", icon: <DashboardOutlined />, label: "Overview" },
   { key: "/contacts", icon: <ContactsOutlined />, label: "Contacts" },
+  { key: "/analytics", icon: <LineChartOutlined />, label: "Analytics" },
+  { key: "/activity", icon: <OrderedListOutlined />, label: "Activity" },
 ];
 export function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -64,18 +67,6 @@ export function DashboardLayout() {
           ),
         }))}
       />
-      {/* <Typography.Text className="sidebar-label">ACCOUNT</Typography.Text>
-      <Menu
-        mode="inline"
-        items={[
-          {
-            key: "settings",
-            icon: <SettingOutlined />,
-            label: "Settings",
-            disabled: true,
-          },
-        ]}
-      /> */}
       <div className="sidebar-foot">
         <span>Workspace status</span>
         <strong>
@@ -109,7 +100,13 @@ export function DashboardLayout() {
           />
           <div className="breadcrumbs">
             Workspace <span>/</span>{" "}
-            {location.pathname === "/contacts" ? "Contacts" : "Overview"}
+            {location.pathname === "/contacts"
+              ? "Contacts"
+              : location.pathname === "/analytics"
+                ? "Analytics"
+                : location.pathname === "/activity"
+                  ? "Activity"
+                  : "Overview"}
           </div>
           <div className="topbar-actions">
             <Typography.Text className="user-email">

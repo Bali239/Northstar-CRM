@@ -6,6 +6,8 @@ import { ProtectedRoute } from "./features/auth/ProtectedRoute";
 import { DashboardLayout } from "./features/layout/DashboardLayout";
 import { OverviewPage } from "./features/dashboard/OverviewPage";
 import ContactsPage from "./features/contacts/ContactsPage";
+import { AnalyticsPage } from "./features/analytics/AnalyticsPage";
+import { ActivityPage } from "./features/activity/ActivityPage";
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
             <Route element={<DashboardLayout />}>
               <Route index element={<OverviewPage />} />
               <Route path="contacts" element={<ContactsPage />} />
+              <Route path="analytics" element={<AnalyticsPage />} />
+              <Route path="activity" element={<ActivityPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Route>

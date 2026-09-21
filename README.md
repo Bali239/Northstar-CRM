@@ -11,11 +11,11 @@ npm run dev
 
 Create a `.env` file with `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. Never put a Supabase service-role key in the frontend. Run `supabase/schema.sql` in the Supabase SQL editor before using live contacts. It creates the contacts table, indexes, RLS policies, and four seed records. The policies allow authenticated users to manage the shared internship workspace; replace them with ownership or tenant policies for production.
 
-The login screen includes a demo workspace for local UI exploration when Supabase is unavailable. Live authentication remains the primary path and uses Supabase email/password auth. Contact list, create, edit, and delete requests go through the typed RTK Query API and mutations invalidate the contact cache without a page reload.
+The login screen includes a demo workspace for local UI exploration when Supabase is unavailable. Live authentication remains the primary path and uses Supabase email/password auth. The authenticated shell has Overview, Contacts, Analytics, and Activity sections. Contact list, create, edit, delete, and date-range filtering go through the typed RTK Query API and mutations invalidate the contact cache without a page reload. Demo contacts are persisted in local storage and are guarded by the demo owner ID; live contacts are scoped by the Supabase RLS policies in `supabase/schema.sql`.
 
 ## Structure
 
-The source is feature-first: `features/auth` owns authentication and route protection, `features/contacts` owns the data contract, filters, API, and CRUD UI, `features/dashboard` owns the overview, and `features/layout` owns the authenticated shell. Shared Redux wiring lives in `redux` and typed hooks in `app`.
+The source is feature-first: `features/auth` owns authentication and route protection, `features/contacts` owns the data contract, filters, API, and CRUD UI, `features/dashboard` owns the overview, `features/analytics` owns charts and metrics, `features/activity` owns the workspace log, and `features/layout` owns the authenticated shell. Shared Redux wiring lives in `redux` and typed hooks in `app`.
 
 ## Checks
 

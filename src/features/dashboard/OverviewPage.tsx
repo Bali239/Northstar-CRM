@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, Col, Row, Statistic, Tag, Typography } from "antd";
 import {
   ArrowUpOutlined,
@@ -11,12 +12,15 @@ import { useGetContactsQuery } from "../contacts/contactsApi";
 
 export function OverviewPage() {
   const isDemo = useAppSelector((state) => state.auth.isDemo);
+  const [now] = useState(() => Date.now());
 
   const { data: contacts = [], isLoading } = useGetContactsQuery({
     search: "",
     status: "all",
     source: "all",
     sort: "newest",
+    createdFrom: "",
+    createdTo: "",
     demo: isDemo,
   });
 
@@ -29,7 +33,7 @@ export function OverviewPage() {
   }, {});
   const recentContacts = contacts.slice(0, 4);
   const recentCount = contacts.filter(
-    (contact) => Date.now() - new Date(contact.created_at).getTime() <= 30 * 24 * 60 * 60 * 1000,
+    (contact) => now - new Date(contact.created_at).getTime() <= 30 * 24 * 60 * 60 * 1000,
   ).length;
   const maxSourceCount = Math.max(...Object.values(sourceCounts), 1);
   const sourceEntries = Object.entries(sourceCounts).sort(([, a], [, b]) => b - a);

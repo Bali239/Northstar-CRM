@@ -5,6 +5,8 @@ const initialState: ContactFilters = {
   status: "all",
   source: "all",
   sort: "newest",
+  createdFrom: "",
+  createdTo: "",
 };
 const contactsUiSlice = createSlice({
   name: "contactsUi",

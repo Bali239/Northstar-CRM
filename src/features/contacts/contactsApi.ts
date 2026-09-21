@@ -251,6 +251,10 @@ export const contactsApi = createApi({
           query = query.eq("status", filters.status);
         if (filters.source !== "all")
           query = query.eq("source", filters.source);
+        if (filters.createdFrom)
+          query = query.gte("created_at", `${filters.createdFrom}T00:00:00.000Z`);
+        if (filters.createdTo)
+          query = query.lte("created_at", `${filters.createdTo}T23:59:59.999Z`);
         query = query.order("created_at", {
           ascending: filters.sort === "oldest",
         });
@@ -316,14 +320,20 @@ export const contactsApi = createApi({
     >({
       queryFn: async ({ id, input, demo }) => {
         if (demo) {
+          const existing = demoContacts.find(
+            (item) => item.id === id && item.owner_id === "demo-user",
+          );
+          if (!existing)
+            return {
+              error: { status: "CUSTOM_ERROR", error: "Contact not found." },
+            };
           const contact = {
+            ...existing,
             ...input,
-            id,
-            created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
-          } as Contact;
+          };
           demoContacts = demoContacts.map((item) =>
-            item.id === id ? contact : item,
+            item.id === id && item.owner_id === "demo-user" ? contact : item,
           );
           writeDemoContacts(demoContacts);
           return { data: contact };
@@ -343,7 +353,9 @@ export const contactsApi = createApi({
     deleteContact: builder.mutation<void, { id: string; demo?: boolean }>({
       queryFn: async ({ id, demo }) => {
         if (demo) {
-          demoContacts = demoContacts.filter((item) => item.id !== id);
+          demoContacts = demoContacts.filter(
+            (item) => !(item.id === id && item.owner_id === "demo-user"),
+          );
           writeDemoContacts(demoContacts);
           return { data: undefined };
         }
@@ -365,7 +377,10 @@ function filterDemo(filters: ContactFilters & { demo?: boolean }) {
             .toLowerCase()
             .includes(filters.search.toLowerCase())) &&
         (filters.status === "all" || contact.status === filters.status) &&
-        (filters.source === "all" || contact.source === filters.source),
+        (filters.source === "all" || contact.source === filters.source) &&
+        contact.owner_id === "demo-user" &&
+        (!filters.createdFrom || contact.created_at >= `${filters.createdFrom}T00:00:00.000Z`) &&
+        (!filters.createdTo || contact.created_at <= `${filters.createdTo}T23:59:59.999Z`),
     )
     .sort((a, b) =>
       filters.sort === "oldest"
