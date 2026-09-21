@@ -1,0 +1,14 @@
+import { useState } from "react";
+import { Avatar, Button, Drawer, Layout, Menu, Popconfirm, Typography, message } from "antd";
+import { CompassOutlined, ContactsOutlined, DashboardOutlined, LogoutOutlined, MenuOutlined, SettingOutlined } from "@ant-design/icons";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "../../config/supabase";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { clearSession } from "../auth/authSlice";
+
+const navItems = [{ key: "/", icon: <DashboardOutlined />, label: "Overview" }, { key: "/contacts", icon: <ContactsOutlined />, label: "Contacts" }];
+export function DashboardLayout() { const [mobileOpen, setMobileOpen] = useState(false); const location = useLocation(); const navigate = useNavigate(); const dispatch = useAppDispatch(); const { user, isDemo } = useAppSelector((state) => state.auth); const name = (user?.user_metadata?.full_name as string | undefined) ?? user?.email?.split("@")[0] ?? "Operator";
+  const signOut = async () => { if (!isDemo) await supabase.auth.signOut(); dispatch(clearSession()); message.success("You have been signed out."); navigate("/login", { replace: true }); };
+  const navigation = <><div className="sidebar-brand"><div className="brand-mark small"><CompassOutlined /></div><span>NORTHSTAR</span></div><Typography.Text className="sidebar-label">WORKSPACE</Typography.Text><Menu mode="inline" selectedKeys={[location.pathname]} items={navItems.map((item) => ({ ...item, label: <NavLink to={item.key} onClick={() => setMobileOpen(false)}>{item.label}</NavLink> }))} /><Typography.Text className="sidebar-label">ACCOUNT</Typography.Text><Menu mode="inline" items={[{ key: "settings", icon: <SettingOutlined />, label: "Settings", disabled: true }]} /><div className="sidebar-foot"><span>Workspace status</span><strong><i /> Live</strong></div></>;
+  return <Layout className="app-layout"><Layout.Sider width={244} className="app-sider">{navigation}</Layout.Sider><Drawer placement="left" open={mobileOpen} onClose={() => setMobileOpen(false)} closable={false} width={260} className="mobile-nav">{navigation}</Drawer><Layout><header className="topbar"><Button className="mobile-menu" type="text" icon={<MenuOutlined />} onClick={() => setMobileOpen(true)} /><div className="breadcrumbs">Workspace <span>/</span> {location.pathname === "/contacts" ? "Contacts" : "Overview"}</div><div className="topbar-actions"><Typography.Text className="user-email">{user?.email}</Typography.Text><Avatar className="user-avatar">{name.slice(0, 1).toUpperCase()}</Avatar><Popconfirm title="Sign out of Northstar?" onConfirm={() => void signOut()} okText="Sign out"><Button type="text" aria-label="Sign out" icon={<LogoutOutlined />} /></Popconfirm></div></header><Layout.Content className="content"><Outlet /></Layout.Content></Layout></Layout>;
+}
