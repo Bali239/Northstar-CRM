@@ -170,6 +170,75 @@ export function OverviewPage() {
           </div>
         </Card>
       </div>
+
+      <div className="dashboard-lower-grid">
+        <Card className="activity-card" title="Recent activity">
+          <div className="activity-list">
+            <div className="activity-item">
+              <span className="activity-dot success" />
+              <div>
+                <strong>Amelia Chen replied to a new opportunity</strong>
+                <p>2 hours ago</p>
+              </div>
+            </div>
+            <div className="activity-item">
+              <span className="activity-dot info" />
+              <div>
+                <strong>Northwind quote was sent to 6 contacts</strong>
+                <p>Today, 9:42 AM</p>
+              </div>
+            </div>
+            <div className="activity-item">
+              <span className="activity-dot warning" />
+              <div>
+                <strong>3 warm leads are ready for follow-up</strong>
+                <p>Yesterday</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="pipeline-card" title="Pipeline momentum">
+          <div className="pipeline-list">
+            <div className="pipeline-row">
+              <div>
+                <span>Discovery</span>
+                <small>18 deals</small>
+              </div>
+              <div className="pipeline-bar">
+                <i style={{ width: "76%" }} />
+              </div>
+            </div>
+            <div className="pipeline-row">
+              <div>
+                <span>Proposal</span>
+                <small>11 deals</small>
+              </div>
+              <div className="pipeline-bar">
+                <i style={{ width: "62%" }} />
+              </div>
+            </div>
+            <div className="pipeline-row">
+              <div>
+                <span>Negotiation</span>
+                <small>7 deals</small>
+              </div>
+              <div className="pipeline-bar">
+                <i style={{ width: "44%" }} />
+              </div>
+            </div>
+            <div className="pipeline-row">
+              <div>
+                <span>Closed</span>
+                <small>4 deals</small>
+              </div>
+              <div className="pipeline-bar">
+                <i style={{ width: "28%" }} />
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

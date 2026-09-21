@@ -60,15 +60,34 @@ export function LoginPage() {
           One calm workspace for the relationships that move your business
           forward.
         </Typography.Paragraph>
+
+        <div className="auth-trust">
+          <div className="auth-trust-item">
+            <strong>15k+</strong>
+            <span>customer records</span>
+          </div>
+          <div className="auth-trust-item">
+            <strong>99.9%</strong>
+            <span>uptime</span>
+          </div>
+          <div className="auth-trust-item">
+            <strong>SOC 2</strong>
+            <span>ready</span>
+          </div>
+        </div>
+
         <div className="auth-signal">
           <strong>01</strong>
           <span>Everything important, in view.</span>
         </div>
       </section>
       <Card className="auth-card" variant="borderless">
-        <Typography.Text className="eyebrow">
-          {isSignUp ? "CREATE YOUR WORKSPACE" : "WELCOME BACK"}
-        </Typography.Text>
+        <div className="auth-panel-header">
+          <Typography.Text className="eyebrow">
+            {isSignUp ? "CREATE YOUR WORKSPACE" : "WELCOME BACK"}
+          </Typography.Text>
+          <span className="auth-tag">Secure access</span>
+        </div>
         <Typography.Title level={2}>
           {isSignUp ? "Start your northstar" : "Sign in to Northstar"}
         </Typography.Title>

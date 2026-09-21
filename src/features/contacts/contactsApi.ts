@@ -1,60 +1,239 @@
 import { createApi, fakeBaseQuery } from "@reduxjs/toolkit/query/react";
 import { supabase } from "../../config/supabase";
 import type { Contact, ContactFilters, ContactInput } from "./contactTypes";
-let demoContacts: Contact[] = [
-  {
-    id: "demo-1",
-    owner_id: "demo-user",
-    full_name: "Maya Chen",
-    email: "maya@northstar.studio",
-    company: "Northstar Studio",
-    status: "active",
-    source: "Referral",
-    phone: "+1 415 555 0182",
-    notes: "Expanding into the west coast market.",
-    created_at: "2026-09-18T09:00:00Z",
-    updated_at: "2026-09-18T09:00:00Z",
-  },
-  {
-    id: "demo-2",
-    owner_id: "demo-user",
-    full_name: "Jon Bell",
-    email: "jon@fieldnote.co",
-    company: "Fieldnote",
-    status: "lead",
-    source: "Event",
-    phone: "+1 212 555 0134",
-    notes: "Met at Product Assembly.",
-    created_at: "2026-09-12T09:00:00Z",
-    updated_at: "2026-09-12T09:00:00Z",
-  },
-  {
-    id: "demo-3",
-    owner_id: "demo-user",
-    full_name: "Amina Okafor",
-    email: "amina@commonthread.org",
-    company: "Common Thread",
-    status: "active",
-    source: "Partner",
-    phone: "+44 20 7946 0958",
-    notes: "Quarterly partnership review due.",
-    created_at: "2026-08-29T09:00:00Z",
-    updated_at: "2026-08-29T09:00:00Z",
-  },
-  {
-    id: "demo-4",
-    owner_id: "demo-user",
-    full_name: "Leo Martins",
-    email: "leo@aperture.io",
-    company: "Aperture",
-    status: "inactive",
-    source: "Inbound",
-    phone: null,
-    notes: "Revisit in Q4.",
-    created_at: "2026-08-17T09:00:00Z",
-    updated_at: "2026-08-17T09:00:00Z",
-  },
+
+const demoNames = [
+  "Maya Chen",
+  "Jon Bell",
+  "Amina Okafor",
+  "Leo Martins",
+  "Priya Shah",
+  "Daniel Cruz",
+  "Harper Lee",
+  "Omar Hassan",
+  "Sofia Nguyen",
+  "Nolan Brooks",
+  "Elena Petrova",
+  "Marcus Hill",
+  "Grace Kim",
+  "Samir Patel",
+  "Rebecca Stone",
+  "Noah Garcia",
+  "Lena Fischer",
+  "Imran Ali",
+  "Chloe Adams",
+  "Victor Silva",
+  "Tara Wilson",
+  "Ethan Ross",
+  "Rina Das",
+  "Thomas Moore",
+  "Aisha Rahman",
+  "Parker Cole",
+  "Iris Novak",
+  "Michael Turner",
+  "Diana Scott",
+  "Julian Park",
+  "Nadia Wolf",
+  "Brandon Lee",
+  "Mila Foster",
+  "Andre Green",
+  "Leah Murphy",
+  "Carter Hall",
+  "Sana Ali",
+  "Mateo Rossi",
+  "Zoe Bennett",
+  "Isaac Walker",
+  "Hannah Reed",
+  "Adrian Price",
+  "Mina Patel",
+  "Theo Lambert",
+  "Ruby James",
+  "David Ortiz",
+  "Genevieve Clark",
+  "Arjun Singh",
+  "Emily King",
+  "Christian Young",
+  "Lila Cooper",
+  "Evan Hughes",
+  "Nina Flores",
+  "Owen Foster",
+  "Serena Cole",
+  "Joseph Hall",
+  "Amelia Ward",
+  "Rahul Nair",
+  "Kayla Powell",
+  "Lucas Reed",
+  "Ivy Brooks",
+  "Rafael Costa",
+  "Maya Patel",
+  "Adam Collins",
+  "Tessa Moore",
+  "Hazel Ramirez",
+  "Graham West",
+  "Claire Johnson",
+  "Nikhil Sen",
+  "Uma Verma",
+  "Liam Bennett",
+  "Alina Petrova",
+  "Jason Lee",
+  "Ariana Gomez",
+  "Henry Clark",
+  "Sophia Nguyen",
+  "Gabriel Ross",
+  "Kira Stone",
+  "Felix Dawson",
+  "Olivia Brown",
+  "Eli Turner",
+  "Jasmine Wu",
+  "Jude Miller",
+  "Natalie Price",
+  "Ryan Ward",
+  "Leonie Martin",
+  "Aiden Davis",
+  "Carla Costa",
+  "Benjamin Fox",
+  "Anya Brooks",
+  "Oliver Scott",
+  "Mila Johnson",
+  "Theo Cook",
+  "Samantha Bell",
+  "Kian Shah",
+  "Aria Cooper",
+  "Sebastian King",
+  "Priya Nair",
+  "Hudson Park",
+  "Sabrina Diaz",
+  "Leo White",
+  "Faith Green",
+  "Daniela Ruiz",
+  "Victor Price",
+  "Cora Foster",
+  "Marcus Bell",
+  "Ruby Nguyen",
+  "Kai Parker",
+  "Nora Collins",
+  "Noah Stone",
+  "Mila Ross",
+  "Erica Hall",
+  "Luca Young",
+  "Alicia Holmes",
+  "Darius Reed",
+  "Elise Morgan",
+  "Gavin Moore",
 ];
+
+const demoCompanies = [
+  "Northstar Studio",
+  "Fieldnote",
+  "Common Thread",
+  "Aperture",
+  "Juniper Labs",
+  "Summit Works",
+  "Harbor & Co",
+  "Velora Systems",
+  "Brightlane",
+  "Orchid Group",
+  "Pioneer Media",
+  "Atlas Advisory",
+  "Northwind Labs",
+  "Kite & Key",
+  "Signal Works",
+  "Travelour",
+  "Helio Labs",
+  "Evermark",
+  "Oak & Pine",
+  "Cinder Studio",
+  "Morrow Health",
+  "Vantage One",
+  "Crestline",
+  "Lattice Works",
+  "Monarch AI",
+  "Lumen Energy",
+  "Maple Forge",
+  "Stone Peak",
+  "Vera Labs",
+  "Blue Harbor",
+  "Summerset",
+  "Silverline",
+  "Nexa Cloud",
+  "Edgewave",
+  "Horizon One",
+  "Juniper & Co",
+  "Oakspire",
+  "Rivepoint",
+  "Facet Studio",
+  "Pine Valley",
+];
+
+const demoSources = ["Inbound", "Referral", "Partner", "Event"] as const;
+const demoStatuses = ["lead", "active", "inactive"] as const;
+const DEMO_CONTACTS_KEY = "northstar-demo-contacts";
+
+function buildDemoContacts(): Contact[] {
+  return Array.from({ length: 100 }, (_, index) => {
+    const name = demoNames[index % demoNames.length];
+    const company = demoCompanies[index % demoCompanies.length];
+    const status = demoStatuses[(index + (index % 3)) % demoStatuses.length];
+    const source = demoSources[index % demoSources.length];
+    const createdAt = new Date(
+      Date.UTC(2026, 8, 3 + (index % 18), 9, 30 + (index % 7)),
+    );
+    const slug = company
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "")
+      .slice(0, 12);
+    const first = name.split(" ")[0].toLowerCase();
+    const phone = `+1 ${String(200 + (index % 700)).padStart(3, "0")} ${String(300 + (index % 500)).padStart(3, "0")} ${String(1000 + index).slice(-4)}`;
+
+    return {
+      id: `demo-${index + 1}`,
+      owner_id: "demo-user",
+      full_name: name,
+      email: `${first}.${slug}@${slug}.com`,
+      company,
+      status,
+      source,
+      phone: index % 3 === 0 ? null : phone,
+      notes:
+        status === "active"
+          ? "Strong relationship and warm follow-up opportunity."
+          : status === "lead"
+            ? "New contact entering the pipeline."
+            : "Dormant contact, worth revisiting in the next quarter.",
+      created_at: createdAt.toISOString(),
+      updated_at: createdAt.toISOString(),
+    };
+  });
+}
+
+function readDemoContacts(): Contact[] {
+  if (typeof window === "undefined") return buildDemoContacts();
+
+  try {
+    const saved = window.localStorage.getItem(DEMO_CONTACTS_KEY);
+    if (!saved) return buildDemoContacts();
+
+    const parsed = JSON.parse(saved) as Contact[] | null;
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      const initial = buildDemoContacts();
+      window.localStorage.setItem(DEMO_CONTACTS_KEY, JSON.stringify(initial));
+      return initial;
+    }
+
+    return parsed;
+  } catch {
+    const fallback = buildDemoContacts();
+    window.localStorage.setItem(DEMO_CONTACTS_KEY, JSON.stringify(fallback));
+    return fallback;
+  }
+}
+
+function writeDemoContacts(next: Contact[]) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(DEMO_CONTACTS_KEY, JSON.stringify(next));
+}
+
+let demoContacts: Contact[] = readDemoContacts();
 export const contactsApi = createApi({
   reducerPath: "contactsApi",
   baseQuery: fakeBaseQuery(),
@@ -96,6 +275,7 @@ export const contactsApi = createApi({
             updated_at: new Date().toISOString(),
           } as Contact;
           demoContacts = [contact, ...demoContacts];
+          writeDemoContacts(demoContacts);
           return { data: contact };
         }
         const { data: userData, error: userError } =
@@ -145,6 +325,7 @@ export const contactsApi = createApi({
           demoContacts = demoContacts.map((item) =>
             item.id === id ? contact : item,
           );
+          writeDemoContacts(demoContacts);
           return { data: contact };
         }
         const { data, error } = await supabase
@@ -163,6 +344,7 @@ export const contactsApi = createApi({
       queryFn: async ({ id, demo }) => {
         if (demo) {
           demoContacts = demoContacts.filter((item) => item.id !== id);
+          writeDemoContacts(demoContacts);
           return { data: undefined };
         }
         const { error } = await supabase.from("contacts").delete().eq("id", id);

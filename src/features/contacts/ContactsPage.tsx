@@ -61,6 +61,7 @@ export default function ContactsPage() {
   const [remove] = useDeleteContactMutation();
   const [editing, setEditing] = useState<Contact | null>(null);
   const [open, setOpen] = useState(false);
+  const [pageSize, setPageSize] = useState(8);
   const [form] = Form.useForm<ContactInput>();
   const { message } = AntdApp.useApp();
   useEffect(() => {
@@ -253,7 +254,13 @@ export default function ContactsPage() {
             columns={columns}
             dataSource={data}
             loading={isLoading}
-            pagination={{ pageSize: 8, hideOnSinglePage: true }}
+            pagination={{
+              pageSize,
+              pageSizeOptions: ["8", "10", "20"],
+              showSizeChanger: true,
+              hideOnSinglePage: true,
+              onShowSizeChange: (_, size) => setPageSize(size),
+            }}
           />
         )}
       </Card>

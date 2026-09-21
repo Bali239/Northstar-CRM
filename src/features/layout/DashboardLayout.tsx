@@ -64,7 +64,7 @@ export function DashboardLayout() {
           ),
         }))}
       />
-      <Typography.Text className="sidebar-label">ACCOUNT</Typography.Text>
+      {/* <Typography.Text className="sidebar-label">ACCOUNT</Typography.Text>
       <Menu
         mode="inline"
         items={[
@@ -75,7 +75,7 @@ export function DashboardLayout() {
             disabled: true,
           },
         ]}
-      />
+      /> */}
       <div className="sidebar-foot">
         <span>Workspace status</span>
         <strong>
