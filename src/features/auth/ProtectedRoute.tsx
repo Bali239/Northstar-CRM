@@ -7,7 +7,7 @@ export function ProtectedRoute() {
   const location = useLocation();
   if (!isReady)
     return (
-      <div className="page-loader">
+      <div className="grid min-h-screen place-items-center bg-[#f4f8fb]">
         <Spin size="large" />
       </div>
     );
