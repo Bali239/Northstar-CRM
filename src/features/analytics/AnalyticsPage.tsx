@@ -57,6 +57,34 @@ export function AnalyticsPage() {
 
   const monthlyTrend = buildMonthlyTrend(contacts);
   const maxMonthlyCount = Math.max(...monthlyTrend.map((month) => month.total), 1);
+  const pipelineStages = [
+    {
+      key: "lead",
+      label: "Lead",
+      description: "New relationship",
+      count: contacts.filter((contact) => contact.status === "lead").length,
+      color: "from-amber-400 to-orange-400",
+    },
+    {
+      key: "active",
+      label: "Active",
+      description: "In conversation",
+      count: contacts.filter((contact) => contact.status === "active").length,
+      color: "from-sky-500 to-cyan-400",
+    },
+    {
+      key: "inactive",
+      label: "Inactive",
+      description: "Needs re-engagement",
+      count: contacts.filter((contact) => contact.status === "inactive").length,
+      color: "from-slate-400 to-slate-300",
+    },
+  ];
+  const missingPhoneCount = contacts.filter((contact) => !contact.phone).length;
+  const missingNotesCount = contacts.filter((contact) => !contact.notes).length;
+  const inactiveRate = contacts.length
+    ? Math.round((pipelineStages[2].count / contacts.length) * 100)
+    : 0;
 
   const trendLine = monthlyTrend
     .map((month, index) => {
@@ -208,6 +236,76 @@ export function AnalyticsPage() {
                 </div>
               );
             })}
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <Card
+          bordered={false}
+          title={<span className="text-lg font-semibold text-slate-800">Pipeline funnel</span>}
+          extra={<Typography.Text type="secondary">Actual contact stages</Typography.Text>}
+          className="!rounded-2xl !border-0 !bg-white/90 !shadow-[0_15px_35px_rgba(15,23,42,0.06)]"
+        >
+          <div className="space-y-5 pt-2">
+            {pipelineStages.map((stage, index) => {
+              const previousCount = index === 0 ? contacts.length : pipelineStages[index - 1].count;
+              const conversionRate = previousCount
+                ? Math.round((stage.count / previousCount) * 100)
+                : 0;
+
+              return (
+                <div key={stage.key}>
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <div>
+                      <div className="font-semibold capitalize text-slate-800">{stage.label}</div>
+                      <div className="text-xs text-slate-500">{stage.description}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-slate-800">{stage.count}</div>
+                      <div className="text-xs text-slate-500">
+                        {index === 0 ? "of all contacts" : `${conversionRate}% from previous`}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="h-3 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r ${stage.color} transition-all duration-700`}
+                      style={{ width: `${contacts.length ? Math.max((stage.count / contacts.length) * 100, stage.count ? 8 : 0) : 0}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        <Card
+          bordered={false}
+          title={<span className="text-lg font-semibold text-slate-800">Data quality signals</span>}
+          extra={<Typography.Text type="secondary">Actionable gaps</Typography.Text>}
+          className="!rounded-2xl !border-0 !bg-white/90 !shadow-[0_15px_35px_rgba(15,23,42,0.06)]"
+        >
+          <div className="space-y-3 pt-2">
+            <div className="rounded-2xl border border-amber-100 bg-amber-50/70 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <span className="font-semibold text-slate-800">Re-engagement queue</span>
+                <Tag color={inactiveRate > 25 ? "orange" : "gold"} className="!rounded-full">
+                  {inactiveRate}%
+                </Tag>
+              </div>
+              <p className="mb-0 mt-1 text-sm text-slate-600">
+                {pipelineStages[2].count} contacts are marked inactive and need a next-step workflow.
+              </p>
+            </div>
+            <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
+              <span className="text-sm text-slate-600">Missing phone numbers</span>
+              <strong className="text-slate-800">{missingPhoneCount}</strong>
+            </div>
+            <div className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50/80 px-4 py-3">
+              <span className="text-sm text-slate-600">Missing relationship notes</span>
+              <strong className="text-slate-800">{missingNotesCount}</strong>
+            </div>
           </div>
         </Card>
       </div>

@@ -68,7 +68,6 @@ export function OverviewPage() {
       return `${index === 0 ? "M" : "L"}${x} ${y}`;
     })
     .join(" ");
-  const trendArea = `${trendLine} L ${24 + (monthlyTrend.length - 1) * 52} 126 L 24 126 Z`;
 
   const todayLabel = new Date().toLocaleDateString("en-US", {
     weekday: "long",

@@ -14,6 +14,7 @@ import {
   Table,
   Tag,
   Typography,
+  type TableColumnsType,
 } from "antd";
 import {
   DeleteOutlined,
@@ -71,10 +72,6 @@ export default function ContactsPage() {
   const { message } = AntdApp.useApp();
 
   useEffect(() => {
-    setSearchValue(filters.search);
-  }, [filters.search]);
-
-  useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       dispatch(setFilter({ key: "search", value: searchValue }));
     }, 400);
@@ -125,10 +122,11 @@ export default function ContactsPage() {
     }
   };
 
-  const columns = [
+  const columns: TableColumnsType<Contact> = [
     {
       title: "Contact",
       key: "contact",
+      width: 240,
       render: (_: unknown, contact: Contact) => (
         <div className="flex items-center gap-3">
           <span className="grid size-9 place-items-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
@@ -141,7 +139,7 @@ export default function ContactsPage() {
         </div>
       ),
     },
-    { title: "Company", dataIndex: "company", key: "company" },
+    { title: "Company", dataIndex: "company", key: "company", width: 170 },
     {
       title: "Status",
       dataIndex: "status",
@@ -152,11 +150,12 @@ export default function ContactsPage() {
         </Tag>
       ),
     },
-    { title: "Source", dataIndex: "source", key: "source" },
+    { title: "Source", dataIndex: "source", key: "source", responsive: ["md"] },
     {
       title: "Added",
       dataIndex: "created_at",
       key: "created_at",
+      responsive: ["md"],
       render: (date: string) =>
         new Date(date).toLocaleDateString("en-US", {
           month: "short",
@@ -201,7 +200,7 @@ export default function ContactsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <Typography.Text className="block text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">
@@ -218,7 +217,7 @@ export default function ContactsPage() {
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          className="!h-11 !rounded-xl !bg-sky-600 hover:!bg-sky-500"
+          className="!h-11 !w-full !rounded-xl !bg-sky-600 hover:!bg-sky-500 sm:!w-auto"
           onClick={() => openForm()}
         >
           Add contact
@@ -227,10 +226,11 @@ export default function ContactsPage() {
 
       <Card
         bordered={false}
-        className="!rounded-2xl !border-0 !bg-white/90 !shadow-[0_15px_35px_rgba(15,23,42,0.06)]"
+        className="!rounded-2xl !border-0 !bg-white/90 !px-1 !shadow-[0_15px_35px_rgba(15,23,42,0.06)] sm:!px-3"
       >
-        <div className="mb-5 grid gap-3 lg:grid-cols-[1.2fr_repeat(4,minmax(0,0.8fr))_auto_auto]">
+        <div className="mb-5 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-[1.2fr_repeat(4,minmax(0,0.8fr))_auto_auto]">
           <Input
+            className="!w-full"
             allowClear
             prefix={<SearchOutlined className="text-slate-400" />}
             placeholder="Search people, companies, email"
@@ -250,6 +250,7 @@ export default function ContactsPage() {
           />
 
           <DatePicker.RangePicker
+            className="!w-full"
             value={[
               filters.createdFrom ? dayjs(filters.createdFrom) : null,
               filters.createdTo ? dayjs(filters.createdTo) : null,
@@ -272,6 +273,7 @@ export default function ContactsPage() {
           />
 
           <Select
+            className="!w-full"
             value={filters.source}
             onChange={(value) => dispatch(setFilter({ key: "source", value }))}
             options={[
@@ -284,6 +286,7 @@ export default function ContactsPage() {
           />
 
           <Select
+            className="!w-full"
             value={filters.sort}
             onChange={(value) => dispatch(setFilter({ key: "sort", value }))}
             options={[
@@ -292,9 +295,22 @@ export default function ContactsPage() {
             ]}
           />
 
-          <div className="flex gap-2">
-            <Button icon={<ReloadOutlined />} loading={isFetching} onClick={() => void refetch()} aria-label="Refresh contacts" />
-            <Button type="link" onClick={() => dispatch(resetFilters())}>Reset</Button>
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2 xl:col-span-1">
+            <Button
+              icon={<ReloadOutlined />}
+              loading={isFetching}
+              onClick={() => void refetch()}
+              aria-label="Refresh contacts"
+            />
+            <Button
+              type="link"
+              onClick={() => {
+                setSearchValue("");
+                dispatch(resetFilters());
+              }}
+            >
+              Reset
+            </Button>
           </div>
         </div>
 
@@ -308,6 +324,7 @@ export default function ContactsPage() {
             columns={columns}
             dataSource={data}
             loading={isLoading}
+            scroll={{ x: 620 }}
             pagination={{
               pageSize,
               pageSizeOptions: ["8", "10", "20"],
@@ -326,7 +343,8 @@ export default function ContactsPage() {
         onCancel={() => setOpen(false)}
         footer={null}
         destroyOnHidden
-        className="!rounded-2xl"
+        width="min(560px, calc(100vw - 24px))"
+        className="!rounded-2xl [&_.ant-modal-content]:!p-4 sm:[&_.ant-modal-content]:!p-6"
       >
         <Form
           form={form}
@@ -342,7 +360,7 @@ export default function ContactsPage() {
             <Input placeholder="e.g. Maya Chen" />
           </Form.Item>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Form.Item
               label="Email"
               name="email"
@@ -359,7 +377,7 @@ export default function ContactsPage() {
             </Form.Item>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <Form.Item label="Status" name="status">
               <Select
                 options={[
